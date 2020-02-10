@@ -21,7 +21,6 @@ Resources:
   MessagesDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${APIName}-messages-ddb-table
       AttributeDefinitions:
         - AttributeName: deviceId
           AttributeType: S
@@ -37,7 +36,6 @@ Resources:
   DevicesDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${APIName}-devices-ddb-table
       AttributeDefinitions:
         - AttributeName: deviceId
           AttributeType: S
@@ -49,7 +47,6 @@ Resources:
   RequestSessionDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: !Sub ${APIName}-request-session-ddb-table
       SSESpecification:
         SSEEnabled: true
       AttributeDefinitions:
@@ -276,15 +273,7 @@ Resources:
       FunctionVersion: "2018-05-29"
       ApiId: !GetAtt AppSyncApi.ApiId
       DataSourceName: !GetAtt GetUserLambdaDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-            "identity": $utils.toJson($context.identity),
-            "request": $utils.toJson($context.request),
-          }
-        }
+      RequestMappingTemplateS3Location: ./templates/ResolverRequestMappingTemplate.vtl
       ResponseMappingTemplate: |
         ## Raise a GraphQL field error in case of a datasource invocation error
         #if($ctx.error)
@@ -302,16 +291,7 @@ Resources:
       TypeName: Query
       FieldName: getMessage
       DataSourceName: !GetAtt GetMessageLambdaDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-            "arguments": $utils.toJson($ctx.args),
-            "identity": $utils.toJson($context.identity),
-            "request": $utils.toJson($context.request),
-          }
-        }
+      RequestMappingTemplateS3Location: ./templates/ResolverRequestMappingTemplate.vtl
       ResponseMappingTemplate: $util.toJson($context.result)
 
   AllMessagesQueryResolver:
@@ -342,16 +322,7 @@ Resources:
       TypeName: Mutation
       FieldName: storeMessage
       DataSourceName: !GetAtt StoreMessageLambdaDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-            "arguments": $utils.toJson($ctx.args),
-            "identity": $utils.toJson($context.identity),
-            "request": $utils.toJson($context.request),
-          }
-        }
+      RequestMappingTemplateS3Location: ./templates/ResolverRequestMappingTemplate.vtl
       ResponseMappingTemplate: |
         ## Raise a GraphQL field error in case of a datasource invocation error
         #if($ctx.error)
@@ -387,16 +358,7 @@ Resources:
       FunctionVersion: "2018-05-29"
       ApiId: !GetAtt AppSyncApi.ApiId
       DataSourceName: !GetAtt GetDeviceLambdaDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-            "arguments": $utils.toJson($context.arguments),
-            "identity": $utils.toJson($context.identity),
-            "request": $utils.toJson($context.request),
-          }
-        }
+      RequestMappingTemplateS3Location: ./templates/ResolverRequestMappingTemplate.vtl
       ResponseMappingTemplate: |
         ## Raise a GraphQL field error in case of a datasource invocation error
         #if($ctx.error)
@@ -413,16 +375,7 @@ Resources:
       TypeName: Device
       FieldName: messages
       DataSourceName: !GetAtt AllMessagesLambdaDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-            "arguments": $utils.toJson($ctx.source),
-            "identity": $utils.toJson($context.identity),
-            "request": $utils.toJson($context.request),
-          }
-        }
+      RequestMappingTemplateS3Location: ./templates/ResolverRequestMappingTemplate.vtl
       ResponseMappingTemplate: $util.toJson($context.result)
 
   AllDevicesQueryResolver:
@@ -448,16 +401,7 @@ Resources:
       FunctionVersion: "2018-05-29"
       ApiId: !GetAtt AppSyncApi.ApiId
       DataSourceName: !GetAtt AllDevicesLambdaDataSource.Name
-      RequestMappingTemplate: |
-        {
-          "version": "2017-02-28",
-          "operation": "Invoke",
-          "payload": {
-            "arguments": $utils.toJson($context.arguments),
-            "identity": $utils.toJson($context.identity),
-            "request": $utils.toJson($context.request),
-          }
-        }
+      RequestMappingTemplateS3Location: ./templates/ResolverRequestMappingTemplate.vtl
       ResponseMappingTemplate: |
         ## Raise a GraphQL field error in case of a datasource invocation error
         #if($ctx.error)
