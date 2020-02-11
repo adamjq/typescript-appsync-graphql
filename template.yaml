@@ -292,7 +292,7 @@ Resources:
       FieldName: getMessage
       DataSourceName: !GetAtt GetMessageLambdaDataSource.Name
       RequestMappingTemplateS3Location: ./templates/ResolverRequestMappingTemplate.vtl
-      ResponseMappingTemplate: $util.toJson($context.result)
+      ResponseMappingTemplateS3Location: ./templates/ResolverResponseMappingTemplate.vtl
 
   AllMessagesQueryResolver:
     Type: AWS::AppSync::Resolver

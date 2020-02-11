@@ -1,0 +1,11 @@
+## Raise a GraphQL field error in case of a datasource invocation error
+#if ($ctx.error)
+  $util.error($ctx.error.message, $ctx.error.type)
+#end
+## Raise CustomError
+#if ($ctx.result.customErrors)
+  #foreach ($err in ${ctx.result.customErrors})
+    $util.appendError($err.message, $err.errorType, null, $err.errorInfo)
+  #end
+#end
+$util.toJson($ctx.result)
